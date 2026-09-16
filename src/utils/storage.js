@@ -1,21 +1,31 @@
-// File ini khusus menangani operasi baca/tulis ke Web Storage (LocalStorage)
-// Menyimpan key dalam konstanta untuk mencegah typo saat pemanggilan berulang
-const STORAGE_KEY = 'kuis_tkj_highscore';
+// Menyimpan prefix key dalam konstanta
+const STORAGE_PREFIX = 'kuis_highscore_';
 
 /**
- * Mengambil skor tertinggi dari LocalStorage.
- * @returns {number} Skor tertinggi (dalam persen), default ke 0 jika belum ada.
+ * Mengambil skor tertinggi dari LocalStorage berdasarkan kategori.
+ * @param {string} category - ID kategori kuis (misal: 'tkj', 'rpl')
  */
-export function getHighscore() {
-    // Ambil string dari LocalStorage, ubah ke integer. 
-    // Gunakan logical OR (||) 0 sebagai nilai default.
-    return parseInt(localStorage.getItem(STORAGE_KEY)) || 0;
+export function getHighscore(category) {
+    return parseInt(localStorage.getItem(STORAGE_PREFIX + category)) || 0;
 }
 
 /**
- * Menyimpan skor tertinggi baru ke LocalStorage.
- * @param {number} percentage - Nilai persentase skor baru yang akan disimpan.
+ * Menyimpan skor tertinggi baru ke LocalStorage berdasarkan kategori.
+ * @param {string} category - ID kategori kuis
+ * @param {number} percentage - Nilai persentase skor baru
  */
-export function saveHighscore(percentage) {
-    localStorage.setItem(STORAGE_KEY, percentage);
+export function saveHighscore(category, percentage) {
+    localStorage.setItem(STORAGE_PREFIX + category, percentage);
+}
+
+/**
+ * Mengatur preferensi Dark Mode
+ */
+export function getDarkModePref() {
+    return localStorage.getItem('theme') === 'dark' || 
+           (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+}
+
+export function setDarkModePref(isDark) {
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
 }

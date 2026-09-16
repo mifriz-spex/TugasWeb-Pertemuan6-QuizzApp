@@ -1,82 +1,61 @@
 // File ini khusus untuk menangani interaksi dengan elemen HTML (DOM)
-// Tidak ada logika skor di sini, hanya murni tampilan.
 
 const elements = {
+    homeScreen: document.getElementById('home-screen'),
+    quizScreen: document.getElementById('quiz-screen'),
+    resultScreen: document.getElementById('result-screen'),
+    categoryContainer: document.getElementById('category-container'),
+    
+    quizHeader: document.getElementById('quiz-header'),
+    quizTitle: document.getElementById('quiz-title'),
+    quizDesc: document.getElementById('quiz-desc'),
+    
     question: document.getElementById('question'),
     options: document.getElementById('options'),
     progress: document.getElementById('progress'),
     nextBtn: document.getElementById('nextBtn'),
-    quizContent: document.getElementById('quiz-content'),
-    result: document.getElementById('result'),
+    
     scoreText: document.getElementById('score-text'),
     highscoreFeedback: document.getElementById('highscore-feedback'),
-    currentHighscore: document.getElementById('current-highscore')
+    currentHighscore: document.getElementById('current-highscore'),
+
+    themeToggle: document.getElementById('theme-toggle'),
+    themeIcon: document.getElementById('theme-icon')
 };
 
-// Fungsi untuk me-render soal ke layar
-export function renderQuestionUI(questionData, currentNumber, totalQuestions) {
-    // 1. Update text progress
-    elements.progress.textContent = `Soal ${currentNumber}/${totalQuestions}`;
+// -- FUNGSI NAVIGASI LAYAR --
+export function showHomeScreen() {
+    elements.quizScreen.classList.add('hidden');
+    elements.resultScreen.classList.add('hidden');
     
-    // 2. Update text soal
-    elements.question.textContent = questionData.question;
-    
-    // 3. Kosongkan pilihan jawaban sebelumnya
-    elements.options.innerHTML = '';
-    
-    // 4. Buat tombol untuk setiap pilihan menggunakan createElement
-    questionData.options.forEach((opt, index) => {
-        const btn = document.createElement('button');
-        
-        // Styling default tombol pilihan (Tailwind)
-        btn.className = 'option-btn bg-white border-2 border-slate-200 text-slate-700 hover:border-indigo-500 hover:bg-indigo-50 font-medium py-3 px-4 rounded-xl text-left transition-all duration-200 shadow-sm';
-        
-        btn.textContent = opt;
-        btn.dataset.index = index; // Penting untuk cek jawaban nanti
-        
-        elements.options.appendChild(btn);
-    });
-    
-    // Sembunyikan tombol "Lanjut" setiap kali soal baru dimuat
-    elements.nextBtn.classList.add('hidden');
+    elements.homeScreen.classList.remove('hidden');
+    // Reset animasi agar jalan lagi saat kembali
+    elements.homeScreen.classList.remove('fade-in');
+    void elements.homeScreen.offsetWidth; // trigger reflow
+    elements.homeScreen.classList.add('fade-in');
 }
 
-// Fungsi memberikan efek warna pada jawaban benar/salah
-export function highlightAnswer(selectedBtn, isCorrect, correctIndex) {
-    const allBtns = elements.options.querySelectorAll('button');
+export function showQuizScreen(categoryData) {
+    elements.homeScreen.classList.add('hidden');
+    elements.resultScreen.classList.add('hidden');
     
-    // Nonaktifkan semua tombol agar tidak bisa diklik dua kali
-    allBtns.forEach(btn => {
-        btn.disabled = true;
-        btn.classList.add('cursor-not-allowed', 'opacity-70');
-        btn.classList.remove('hover:border-indigo-500', 'hover:bg-indigo-50');
-    });
+    // Update Header Kuis
+    elements.quizTitle.textContent = categoryData.title;
+    elements.quizDesc.textContent = categoryData.description;
     
-    if (isCorrect) {
-        // Styling jika jawaban benar (Hijau)
-        selectedBtn.classList.remove('border-slate-200');
-        selectedBtn.classList.add('border-green-500', 'bg-green-100', 'text-green-800', 'opacity-100');
-    } else {
-        // Styling jika jawaban salah (Merah)
-        selectedBtn.classList.remove('border-slate-200');
-        selectedBtn.classList.add('border-red-500', 'bg-red-100', 'text-red-800', 'opacity-100');
-        
-        // Tunjukkan mana jawaban yang seharusnya benar
-        const correctBtn = elements.options.querySelector(`[data-index="${correctIndex}"]`);
-        if (correctBtn) {
-            correctBtn.classList.remove('border-slate-200');
-            correctBtn.classList.add('border-green-500', 'bg-green-50', 'text-green-800', 'opacity-100');
-        }
-    }
+    // Warna header menyesuaikan kategori (opsional tapi bagus)
+    const color = categoryData.color;
+    elements.quizHeader.className = `p-6 relative overflow-hidden transition-colors text-white bg-${color}-600 dark:bg-${color}-700`;
     
-    // Tampilkan tombol "Lanjut"
-    elements.nextBtn.classList.remove('hidden');
+    elements.quizScreen.classList.remove('hidden');
+    elements.quizScreen.classList.remove('fade-in');
+    void elements.quizScreen.offsetWidth; 
+    elements.quizScreen.classList.add('fade-in');
 }
 
-// Menampilkan layar hasil akhir
 export function showResultUI(score, total, percentage, isNewHighscore) {
-    elements.quizContent.classList.add('hidden');
-    elements.result.classList.remove('hidden');
+    elements.quizScreen.classList.add('hidden');
+    elements.resultScreen.classList.remove('hidden');
     
     elements.scoreText.textContent = `${score}/${total} (${percentage}%)`;
     
@@ -87,18 +66,88 @@ export function showResultUI(score, total, percentage, isNewHighscore) {
     }
 }
 
-// Update angka Highscore di pojok kanan atas
+// -- FUNGSI RENDER KOMPONEN --
+export function renderCategories(quizDataObject, onSelectCallback) {
+    elements.categoryContainer.innerHTML = '';
+    
+    for (const [key, data] of Object.entries(quizDataObject)) {
+        const card = document.createElement('button');
+        card.className = `flex flex-col items-center p-6 bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-100 dark:border-slate-700 hover:border-${data.color}-500 dark:hover:border-${data.color}-400 hover:shadow-lg transition-all duration-300 group`;
+        
+        card.innerHTML = `
+            <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">${data.icon}</div>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">${data.title}</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 text-center">${data.questions.length} Soal</p>
+        `;
+        
+        card.addEventListener('click', () => onSelectCallback(key));
+        elements.categoryContainer.appendChild(card);
+    }
+}
+
+export function renderQuestionUI(questionData, currentNumber, totalQuestions) {
+    elements.progress.textContent = `Soal ${currentNumber}/${totalQuestions}`;
+    elements.question.textContent = questionData.question;
+    elements.options.innerHTML = '';
+    
+    questionData.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        // Styling pilihan ganda untuk light & dark mode
+        btn.className = 'option-btn bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-600 font-medium py-3.5 px-5 rounded-xl text-left transition-all duration-200';
+        
+        btn.textContent = opt;
+        btn.dataset.index = index;
+        elements.options.appendChild(btn);
+    });
+    
+    elements.nextBtn.classList.add('hidden');
+}
+
+export function highlightAnswer(selectedBtn, isCorrect, correctIndex) {
+    const allBtns = elements.options.querySelectorAll('button');
+    
+    allBtns.forEach(btn => {
+        btn.disabled = true;
+        btn.classList.add('cursor-not-allowed', 'opacity-60');
+        btn.classList.remove('hover:border-indigo-500', 'hover:bg-indigo-50', 'dark:hover:border-indigo-400', 'dark:hover:bg-slate-600');
+    });
+    
+    if (isCorrect) {
+        selectedBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
+        selectedBtn.classList.add('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-900/30', 'text-emerald-700', 'dark:text-emerald-400', 'opacity-100');
+    } else {
+        selectedBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
+        selectedBtn.classList.add('border-rose-500', 'bg-rose-50', 'dark:bg-rose-900/30', 'text-rose-700', 'dark:text-rose-400', 'opacity-100');
+        
+        const correctBtn = elements.options.querySelector(`[data-index="${correctIndex}"]`);
+        if (correctBtn) {
+            correctBtn.classList.remove('border-slate-200', 'dark:border-slate-600');
+            correctBtn.classList.add('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-900/30', 'text-emerald-700', 'dark:text-emerald-400', 'opacity-100');
+        }
+    }
+    
+    elements.nextBtn.classList.remove('hidden');
+}
+
 export function updateHighscoreUI(highscore) {
     elements.currentHighscore.textContent = highscore;
 }
 
-// Mengembalikan tampilan ke awal kuis
-export function resetUI() {
-    elements.result.classList.add('hidden');
-    elements.quizContent.classList.remove('hidden');
+// -- FUNGSI DARK MODE --
+export function applyTheme(isDark) {
+    if (isDark) {
+        document.documentElement.classList.add('dark');
+        elements.themeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />'; // Sun Icon
+    } else {
+        document.documentElement.classList.remove('dark');
+        elements.themeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />'; // Moon Icon
+    }
 }
 
-// Fungsi getter untuk memberikan akses elemen ke app.js (untuk addEventListener)
+// Getters untuk Event Listeners
 export const getOptionsContainer = () => elements.options;
 export const getNextBtn = () => elements.nextBtn;
 export const getRestartBtn = () => document.getElementById('restartBtn');
+export const getHomeBtn = () => document.getElementById('homeBtn');
+export const getBackBtn = () => document.getElementById('back-btn');
+export const getThemeToggleBtn = () => elements.themeToggle;

@@ -1,84 +1,105 @@
-// File ini adalah otak aplikasi. Menyatukan data, UI, dan mengatur State.
 import { quizData } from './data/question.js';
 import * as UI from './components/ui.js';
-import { getHighscore, saveHighscore } from './utils/storage.js';
+import { getHighscore, saveHighscore, getDarkModePref, setDarkModePref } from './utils/storage.js';
 
 // State Aplikasi
+let currentCategory = null; 
 let currentQuestionIndex = 0;
 let score = 0;
 
-// -- LOGIKA ALUR KUIS --
-function initQuiz() {
+// Inisialisasi awal saat halaman dimuat
+export function startApp() {
+    // 1. Atur Tema (Dark/Light Mode)
+    const isDark = getDarkModePref();
+    UI.applyTheme(isDark);
+    
+    // 2. Render Pilihan Kategori
+    UI.renderCategories(quizData, handleCategorySelect);
+    
+    // 3. Pasang Event Listeners Statis
+    UI.getOptionsContainer().addEventListener('click', handleOptionClick);
+    UI.getNextBtn().addEventListener('click', handleNext);
+    
+    // Tombol Navigasi
+    UI.getRestartBtn().addEventListener('click', () => initQuiz(currentCategory));
+    UI.getHomeBtn().addEventListener('click', UI.showHomeScreen);
+    UI.getBackBtn().addEventListener('click', UI.showHomeScreen);
+    
+    // Tombol Tema
+    UI.getThemeToggleBtn().addEventListener('click', () => {
+        const willBeDark = !document.documentElement.classList.contains('dark');
+        setDarkModePref(willBeDark);
+        UI.applyTheme(willBeDark);
+    });
+}
+
+// Menangani saat user memilih kategori di Home Screen
+function handleCategorySelect(categoryKey) {
+    currentCategory = categoryKey;
+    initQuiz(categoryKey);
+}
+
+// Memulai kuis berdasarkan kategori yang dipilih
+function initQuiz(categoryKey) {
     currentQuestionIndex = 0;
     score = 0;
-    UI.resetUI();
-    UI.updateHighscoreUI(getHighscore());
+    
+    const categoryData = quizData[categoryKey];
+    
+    // Tampilkan layar kuis
+    UI.showQuizScreen(categoryData);
+    
+    // Ambil highscore spesifik kategori ini
+    UI.updateHighscoreUI(getHighscore(categoryKey));
+    
     loadQuestion();
 }
 
 function loadQuestion() {
-    const currentQ = quizData[currentQuestionIndex];
-    UI.renderQuestionUI(currentQ, currentQuestionIndex + 1, quizData.length);
+    const questionsList = quizData[currentCategory].questions;
+    const currentQ = questionsList[currentQuestionIndex];
+    UI.renderQuestionUI(currentQ, currentQuestionIndex + 1, questionsList.length);
 }
 
-// Menangani klik pilihan ganda (Event Delegation)
+// Menangani klik pilihan ganda
 function handleOptionClick(e) {
-    // Cari elemen terdekat dengan class .option-btn
     const btn = e.target.closest('.option-btn');
-    
-    // Jika yang diklik bukan tombol pilihan, hentikan fungsi
     if (!btn) return;
     
-    // Cek jawaban
     const selectedIndex = parseInt(btn.dataset.index);
-    const correctIndex = quizData[currentQuestionIndex].correct;
+    const questionsList = quizData[currentCategory].questions;
+    const correctIndex = questionsList[currentQuestionIndex].correct;
     const isCorrect = (selectedIndex === correctIndex);
     
-    if (isCorrect) {
-        score++;
-    }
+    if (isCorrect) score++;
     
-    // Panggil UI untuk mengubah warna tombol
     UI.highlightAnswer(btn, isCorrect, correctIndex);
 }
 
-// Menangani klik tombol Lanjut
 function handleNext() {
     currentQuestionIndex++;
+    const questionsList = quizData[currentCategory].questions;
     
-    if (currentQuestionIndex < quizData.length) {
+    if (currentQuestionIndex < questionsList.length) {
         loadQuestion();
     } else {
         finishQuiz();
     }
 }
 
-// Menangani penyelesaian kuis
+// Menyelesaikan kuis dan simpan skor per-kategori
 function finishQuiz() {
-    const total = quizData.length;
+    const total = quizData[currentCategory].questions.length;
     const percentage = Math.round((score / total) * 100);
-    const currentHigh = getHighscore();
+    const currentHigh = getHighscore(currentCategory);
     
     let isNewHighscore = false;
     
     if (percentage > currentHigh) {
         isNewHighscore = true;
-        saveHighscore(percentage);
-        UI.updateHighscoreUI(percentage); // Langsung update angka highscore di layar
+        saveHighscore(currentCategory, percentage);
+        UI.updateHighscoreUI(percentage);
     }
     
     UI.showResultUI(score, total, percentage, isNewHighscore);
-}
-
-// Fungsi utama yang akan dipanggil dari main.js
-export function startApp() {
-    // 1. Pasang Event Listeners
-    // Menggunakan Event Delegation pada container options
-    UI.getOptionsContainer().addEventListener('click', handleOptionClick);
-    
-    UI.getNextBtn().addEventListener('click', handleNext);
-    UI.getRestartBtn().addEventListener('click', initQuiz);
-    
-    // 2. Mulai Kuis
-    initQuiz();
 }
