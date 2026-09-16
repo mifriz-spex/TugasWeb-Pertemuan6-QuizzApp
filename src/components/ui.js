@@ -43,9 +43,8 @@ export function showQuizScreen(categoryData) {
     elements.quizTitle.textContent = categoryData.title;
     elements.quizDesc.textContent = categoryData.description;
     
-    // Warna header menyesuaikan kategori (opsional tapi bagus)
-    const color = categoryData.color;
-    elements.quizHeader.className = `p-6 relative overflow-hidden transition-colors text-white bg-${color}-600 dark:bg-${color}-700`;
+    // Menggunakan class utuh dari data.theme agar dibaca Tailwind
+    elements.quizHeader.className = `p-6 relative overflow-hidden transition-colors text-white ${categoryData.theme.headerBg}`;
     
     elements.quizScreen.classList.remove('hidden');
     elements.quizScreen.classList.remove('fade-in');
@@ -72,10 +71,13 @@ export function renderCategories(quizDataObject, onSelectCallback) {
     
     for (const [key, data] of Object.entries(quizDataObject)) {
         const card = document.createElement('button');
-        card.className = `flex flex-col items-center p-6 bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-100 dark:border-slate-700 hover:border-${data.color}-500 dark:hover:border-${data.color}-400 hover:shadow-lg transition-all duration-300 group`;
+        // Memasukkan class border hover dinamis secara utuh
+        card.className = `flex flex-col items-center p-6 bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-100 dark:border-slate-700 hover:shadow-lg transition-all duration-300 group ${data.theme.borderHover}`;
         
         card.innerHTML = `
-            <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">${data.icon}</div>
+            <div class="mb-4 group-hover:scale-110 transition-transform w-12 h-12 ${data.theme.iconColor}">
+                ${data.icon}
+            </div>
             <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">${data.title}</h3>
             <p class="text-sm text-slate-500 dark:text-slate-400 text-center">${data.questions.length} Soal</p>
         `;
