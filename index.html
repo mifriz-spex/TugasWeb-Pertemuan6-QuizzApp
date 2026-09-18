@@ -4,44 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kuis Interaktif Multikategori</title>
-    <style>
-        .fade-in { animation: fadeIn 0.3s ease-in-out forwards; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
 </head>
-<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans min-h-screen flex items-center justify-center p-4 transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans min-h-screen flex items-center justify-center p-4 transition-colors duration-300">
 
-    <!-- Tombol Dark Mode Toggle -->
-    <button id="theme-toggle" class="absolute top-4 right-4 md:top-8 md:right-8 p-2.5 rounded-full bg-white dark:bg-slate-800 shadow-md text-slate-500 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all border border-slate-200 dark:border-slate-700">
+    <button id="theme-toggle" class="absolute top-4 right-4 md:top-8 md:right-8 p-3 rounded-full bg-white dark:bg-slate-800 shadow-md text-slate-500 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all border border-slate-200 dark:border-slate-700">
         <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <!-- Icon diatur oleh JS -->
         </svg>
     </button>
 
-    <!-- Container Utama -->
     <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl dark:shadow-2xl dark:ring-1 dark:ring-white/10 w-full max-w-3xl overflow-hidden relative transition-colors duration-300">
         
-        <!-- ================= Laman Beranda (Kategori) ================= -->
-        <div id="home-screen" class="p-6 md:p-10 fade-in">
-            <div class="text-center mb-10">
-                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 dark:text-white tracking-tight mb-3">Pilih Kategori Kuis</h1>
-                <p class="text-slate-500 dark:text-slate-400">Uji pengetahuan Anda di berbagai bidang teknologi.</p>
+        <!-- ================= Laman Welcome (Awal) ================= -->
+        <div id="welcome-screen" class="p-10 md:p-16 text-center fade-in">
+            <div class="w-24 h-24 mx-auto bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-3xl flex items-center justify-center mb-6 shadow-inner transform rotate-3">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 -rotate-3"><path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" /></svg>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-800 dark:text-white tracking-tight mb-4">Quiz<span class="text-indigo-600 dark:text-indigo-400">Master</span></h1>
+            <p class="text-slate-500 dark:text-slate-400 mb-10 max-w-md mx-auto text-lg">Uji pengetahuan Anda di berbagai bidang teknologi dengan soal yang diacak secara sistematis.</p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button id="welcome-start-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-10 rounded-xl shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all hover:-translate-y-1">
+                    Mulai Kuis
+                </button>
+                <button id="welcome-score-btn" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold py-4 px-10 rounded-xl border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0" /></svg>
+                    Papan Skor
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= Laman Papan Skor ================= -->
+        <div id="highscore-screen" class="hidden p-6 md:p-10 fade-in">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7 text-yellow-500"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0" /></svg>
+                    Papan Skor Tertinggi
+                </h2>
+                <button id="close-score-btn" class="p-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors text-slate-600 dark:text-slate-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            
+            <div id="score-list-container" class="space-y-4">
+                <!-- List skor di-render di sini oleh JavaScript -->
+            </div>
+        </div>
+
+        <!-- ================= Laman Kategori ================= -->
+        <div id="category-screen" class="hidden p-6 md:p-10 fade-in">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight mb-2">Pilih Kategori</h1>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm">Pilih bidang kuis yang ingin Anda ikuti.</p>
+                </div>
+                <button id="back-to-welcome-btn" class="px-4 py-2 text-sm font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg transition-colors">
+                    ← Kembali
+                </button>
             </div>
             
             <div id="category-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                <!-- Card Kategori akan di-render di sini oleh JavaScript -->
+                <!-- Card Kategori di-render oleh JavaScript -->
             </div>
+        </div>
+
+        <!-- ================= Laman Pilih Jumlah Soal ================= -->
+        <div id="config-screen" class="hidden p-6 md:p-10 text-center fade-in">
+            <button id="back-to-category-btn" class="absolute top-6 left-6 px-4 py-2 text-sm font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg transition-colors">
+                ← Batal
+            </button>
+            
+            <div class="mt-8 mb-6">
+                <div id="config-category-icon" class="w-16 h-16 mx-auto mb-4 text-indigo-500"></div>
+                <h2 id="config-category-title" class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Judul Kategori</h2>
+                <p class="text-slate-500 dark:text-slate-400">Pilih jumlah soal yang ingin dikerjakan.</p>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 max-w-lg mx-auto mb-10">
+                <!-- Tombol dinamis kelipatan 5 -->
+                <button class="config-count-btn bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 py-4 rounded-xl text-lg font-bold text-slate-700 dark:text-slate-200 transition-all hover:-translate-y-1" data-count="5">5</button>
+                <button class="config-count-btn bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 py-4 rounded-xl text-lg font-bold text-slate-700 dark:text-slate-200 transition-all hover:-translate-y-1" data-count="10">10</button>
+                <button class="config-count-btn bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 py-4 rounded-xl text-lg font-bold text-slate-700 dark:text-slate-200 transition-all hover:-translate-y-1" data-count="15">15</button>
+                <button class="config-count-btn bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 py-4 rounded-xl text-lg font-bold text-slate-700 dark:text-slate-200 transition-all hover:-translate-y-1" data-count="20">20</button>
+                <button class="config-count-btn bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 py-4 rounded-xl text-lg font-bold text-slate-700 dark:text-slate-200 transition-all hover:-translate-y-1 sm:col-span-1 col-span-2" data-count="25">25</button>
+            </div>
+            
         </div>
 
         <!-- ================= Laman Kuis Aktif ================= -->
         <div id="quiz-screen" class="hidden flex-col h-full fade-in">
-            <!-- Header Kuis -->
             <div id="quiz-header" class="bg-indigo-600 dark:bg-indigo-700 text-white p-6 relative overflow-hidden transition-colors">
-                <button id="back-btn" class="absolute top-4 left-4 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors flex items-center text-sm font-medium">
-                    ← Kembali
+                <button id="exit-quiz-btn" class="absolute top-4 left-4 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors flex items-center text-sm font-medium">
+                    ✕ Keluar
                 </button>
                 <div class="mt-6 text-center">
                     <h2 id="quiz-title" class="text-2xl font-bold">Judul Kuis</h2>
@@ -50,7 +104,6 @@
             </div>
 
             <div class="p-6 md:p-8">
-                <!-- Status Bar -->
                 <div class="flex justify-between items-center mb-8 text-sm font-semibold">
                     <div id="progress" class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-600">Soal 1/5</div>
                     <div class="flex items-center gap-1.5 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-500 px-4 py-1.5 rounded-full border border-yellow-200 dark:border-yellow-700/50">
@@ -58,15 +111,13 @@
                     </div>
                 </div>
 
-                <!-- Pertanyaan -->
                 <h3 id="question" class="text-xl md:text-2xl font-bold mb-8 text-slate-800 dark:text-slate-100 leading-snug">Memuat soal...</h3>
 
-                <!-- Pilihan Jawaban -->
                 <div id="options" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                     <!-- Tombol di-render JS -->
                 </div>
 
-                <div class="flex justify-end">
+                <div class="flex justify-end h-12">
                     <button id="nextBtn" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2">
                         Lanjut →
                     </button>
@@ -76,8 +127,8 @@
 
         <!-- ================= Laman Hasil Akhir ================= -->
         <div id="result-screen" class="hidden p-8 md:p-12 text-center fade-in">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full mb-6">
-                <span class="text-4xl">🏆</span>
+            <div class="inline-flex items-center justify-center w-24 h-24 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
             <h2 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Kuis Selesai!</h2>
             <div class="my-8 bg-slate-50 dark:bg-slate-700/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-700">
@@ -88,10 +139,10 @@
             
             <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <button id="restartBtn" class="bg-indigo-100 dark:bg-indigo-900/40 hover:bg-indigo-200 dark:hover:bg-indigo-800/60 text-indigo-700 dark:text-indigo-300 font-semibold py-3 px-8 rounded-xl transition duration-200">
-                    Coba Kategori Ini Lagi
+                    Coba Lagi
                 </button>
                 <button id="homeBtn" class="bg-slate-800 dark:bg-slate-100 hover:bg-slate-900 dark:hover:bg-white text-white dark:text-slate-900 font-semibold py-3 px-8 rounded-xl shadow-md transition duration-200">
-                    Pilih Kategori Lain
+                    Menu Utama
                 </button>
             </div>
         </div>
